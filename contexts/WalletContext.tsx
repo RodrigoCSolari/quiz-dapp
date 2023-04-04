@@ -4,6 +4,7 @@ import {
   requestGoerliChain,
 } from "../lib/metamask";
 import { ProviderRpcError } from "../lib/metamask.types";
+import { getErrorMessage } from "../utils/getErrorMessage";
 import { ethers } from "ethers";
 import { createContext, useEffect, useState } from "react";
 
@@ -16,7 +17,9 @@ type WalletContextType = {
   chainId: number | undefined;
   connect: () => void;
   disconnect: () => void;
+  errorMsg: string;
   provider: ethers.providers.Web3Provider | undefined;
+  removeError: () => void;
   signer: ethers.providers.JsonRpcSigner | undefined;
   swichToGoerli: () => void;
 };
@@ -30,6 +33,7 @@ export default function WalletProvider({ children }: Props) {
   const [address, setAddress] = useState<string>();
   const [signer, setSigner] = useState<ethers.providers.JsonRpcSigner>();
   const [chainId, setChainId] = useState<number>();
+  const [errorMsg, setErrorMsg] = useState("");
 
   const connect = async () => {
     if (typeof window.ethereum !== "undefined") {
@@ -45,7 +49,8 @@ export default function WalletProvider({ children }: Props) {
         const addr = await _signer.getAddress();
         setAddress(addr);
       } catch (error) {
-        return error;
+        const _errorMsg = getErrorMessage(error);
+        setErrorMsg(_errorMsg);
       }
     }
   };
@@ -61,6 +66,10 @@ export default function WalletProvider({ children }: Props) {
     connect();
   };
 
+  const removeError = () => {
+    setErrorMsg("");
+  };
+
   const swichToGoerli = async () => {
     if (chainId !== 5 && window.ethereum) {
       const { ethereum } = window;
@@ -72,10 +81,12 @@ export default function WalletProvider({ children }: Props) {
             await addGoerliToWallet(ethereum);
             return;
           } catch (err) {
-            return err;
+            const _errorMsg = getErrorMessage(err);
+            setErrorMsg(_errorMsg);
           }
         } else {
-          return error;
+          const _errorMsg = getErrorMessage(error);
+          setErrorMsg(_errorMsg);
         }
       }
     }
@@ -88,7 +99,7 @@ export default function WalletProvider({ children }: Props) {
       return () => {
         if (window.ethereum) {
           window.ethereum.removeListener("accountsChanged", () => listener());
-          window.ethereum.removeListener("accountsChanged", () => listener());
+          window.ethereum.removeListener("chainChanged", () => listener());
         }
       };
     }
@@ -101,7 +112,9 @@ export default function WalletProvider({ children }: Props) {
         chainId,
         connect,
         disconnect,
+        errorMsg,
         provider,
+        removeError,
         signer,
         swichToGoerli,
       }}
