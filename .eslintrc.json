@@ -1,0 +1,45 @@
+{
+    "env": {
+        "browser": true,
+        "es2021": true,
+        "node": true
+    },
+    "extends": [
+        "eslint:recommended",
+        "plugin:react/recommended",
+        "plugin:@typescript-eslint/recommended",
+        "next/core-web-vitals"
+    ],
+    "overrides": [
+    ],
+    "parser": "@typescript-eslint/parser",
+    "parserOptions": {
+        "ecmaVersion": "latest",
+        "sourceType": "module"
+    },
+    "plugins": [
+        "react",
+        "@typescript-eslint"
+    ],
+    "rules": {
+        "no-console": "warn",
+	    "no-shadow": "error",
+	    "import/order": [ "error",{
+		    "groups": [],
+		    "alphabetize": { "order": "asc" }
+	    }],
+	    "sort-keys": ["error", "asc", { "caseSensitive": false, "natural": true }],
+        "no-inline-comments": "error",
+        "arrow-parens": "error",
+        "arrow-body-style": "error",
+        "no-confusing-arrow": "error",
+        "no-duplicate-imports": "error",
+        "no-var": "error",
+        "no-multiple-empty-lines": [
+          "error",
+          {
+            "max": 1
+          }
+        ]
+    }
+}
