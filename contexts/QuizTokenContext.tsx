@@ -64,7 +64,7 @@ export default function QuizTokenProvider({ children }: Props) {
           setTokenName(values[1]);
           setTokenSymbol(values[2]);
           setBalance(wtoeCommify(values[3]));
-          setNextSurveyTime(Number(values[1]) + Number(values[4]));
+          setNextSurveyTime(Number(values[0]) + Number(values[4]));
         })
         .catch((error) => {
           const errorMessage = getErrorMessage(error);
