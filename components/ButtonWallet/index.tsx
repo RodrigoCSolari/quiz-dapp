@@ -1,13 +1,20 @@
+import AccountModal from "../AccountModal";
 import { getConfig } from "@/config";
 import useWallet from "@/hooks/useWallet";
 import { showShortAccountId } from "@/lib/util";
-import { RetweetOutlined } from "@ant-design/icons";
+import { DownOutlined, RetweetOutlined } from "@ant-design/icons";
 import { Button } from "antd";
+import { useState } from "react";
 
 const config = getConfig();
 
 export const ButtonWallet = () => {
+  const [showModal, setShowModal] = useState(false);
   const { address, chainId, connect, disconnect, swichToGoerli } = useWallet();
+
+  const handleShowModal = () => {
+    setShowModal(true);
+  };
 
   if (!address) {
     return <Button onClick={connect}>Connect Wallet</Button>;
@@ -28,9 +35,15 @@ export const ButtonWallet = () => {
 
   return (
     <>
-      <Button type="primary" onClick={disconnect}>
+      <Button icon={<DownOutlined />} type="primary" onClick={handleShowModal}>
         {showShortAccountId(address)}
       </Button>
+      <AccountModal
+        showModal={showModal}
+        setShowModal={setShowModal}
+        address={address}
+        disconnect={disconnect}
+      />
     </>
   );
 };
