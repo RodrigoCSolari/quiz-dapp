@@ -1,13 +1,5 @@
-import { Col, Row, Typography } from "antd";
+import Disconnected from "./disconnected";
 
 export default function Home() {
-  return (
-    <Row justify="center">
-      <Col>
-        <Typography.Text>
-          Connect your wallet to earn Quiz Tokens
-        </Typography.Text>
-      </Col>
-    </Row>
-  );
+  return <Disconnected />;
 }
