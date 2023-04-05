@@ -1,5 +1,6 @@
 import { header, menu } from "./index.style";
-import { Button, Col, Row } from "antd";
+import { ButtonWallet } from "../ButtonWallet";
+import { Col, Row } from "antd";
 import Link from "next/link";
 
 export default function Header(): JSX.Element {
@@ -11,7 +12,7 @@ export default function Header(): JSX.Element {
         </Link>
       </Col>
       <Col flex={1}>
-        <Button type="primary">Connect Wallet</Button>
+        <ButtonWallet />
       </Col>
     </Row>
   );
