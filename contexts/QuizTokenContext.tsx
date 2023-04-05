@@ -10,7 +10,7 @@ import {
   symbol,
 } from "@/lib/quizToken";
 import { getTimeLeftClock } from "@/utils/getTimeLeftClock";
-import { createContext, useEffect, useState } from "react";
+import { createContext, useCallback, useEffect, useState } from "react";
 
 type Props = {
   children: React.ReactNode;
@@ -18,11 +18,10 @@ type Props = {
 
 type QuizTokenContextType = {
   balance: string | undefined;
-  cooldownSec: number | undefined;
   errorMsg: string;
-  getTimeLeft: () => string;
-  lastSubmit: number | undefined;
+  getTimeLeft: () => string | undefined;
   loadingSubmit: boolean;
+  nextSurveySecs: number | undefined;
   removeError: () => void;
   submitSurvey: (surveyId: number, answerId: number[]) => void;
   tokenName: string | undefined;
@@ -36,8 +35,7 @@ export const QuizTokenContext = createContext<QuizTokenContextType>(
 export default function QuizTokenProvider({ children }: Props) {
   const { address, signer, provider } = useWallet();
   const [balance, setBalance] = useState<string | undefined>("");
-  const [cooldownSec, setCooldownSec] = useState<number | undefined>();
-  const [lastSubmit, setLastSubmit] = useState<number | undefined>();
+  const [nextSurveyTime, setNextSurveyTime] = useState<number | undefined>();
   const [loadingSubmit, setLoadingSubmit] = useState(false);
   const [tokenName, setTokenName] = useState<string | undefined>("");
   const [tokenSymbol, setTokenSymbol] = useState<string | undefined>("");
@@ -48,13 +46,37 @@ export default function QuizTokenProvider({ children }: Props) {
   };
 
   const getTimeLeft = () => {
-    if (lastSubmit && cooldownSec) {
-      return getTimeLeftClock(
-        lastSubmit + cooldownSec - Math.floor(Date.now() / 1000)
-      );
+    if (nextSurveyTime) {
+      return getTimeLeftClock(nextSurveyTime - Math.floor(Date.now() / 1000));
     }
-    return "";
   };
+
+  const fetchContractData = useCallback(() => {
+    if (provider && address) {
+      Promise.all([
+        cooldownSeconds(provider),
+        name(provider),
+        symbol(provider),
+        balanceOf(provider, address),
+        lastSubmittal(provider, address),
+      ])
+        .then((values) => {
+          setTokenName(values[1]);
+          setTokenSymbol(values[2]);
+          setBalance(wtoeCommify(values[3]));
+          setNextSurveyTime(Number(values[1]) + Number(values[4]));
+        })
+        .catch((error) => {
+          const errorMessage = getErrorMessage(error);
+          setErrorMsg(errorMessage);
+        });
+    } else {
+      setTokenName(undefined);
+      setTokenSymbol(undefined);
+      setBalance(undefined);
+      setNextSurveyTime(undefined);
+    }
+  }, [address, provider]);
 
   const submitSurvey = async (surveyId: number, answerId: number[]) => {
     if (signer && provider && address) {
@@ -74,43 +96,17 @@ export default function QuizTokenProvider({ children }: Props) {
   };
 
   useEffect(() => {
-    if (provider && address) {
-      Promise.all([
-        cooldownSeconds(provider),
-        name(provider),
-        symbol(provider),
-        balanceOf(provider, address),
-        lastSubmittal(provider, address),
-      ])
-        .then((values) => {
-          setCooldownSec(Number(values[0]));
-          setTokenName(values[1]);
-          setTokenSymbol(values[2]);
-          setBalance(wtoeCommify(values[3]));
-          setLastSubmit(Number(values[4]));
-        })
-        .catch((error) => {
-          const errorMessage = getErrorMessage(error);
-          setErrorMsg(errorMessage);
-        });
-    } else {
-      setCooldownSec(undefined);
-      setTokenName(undefined);
-      setTokenSymbol(undefined);
-      setBalance(undefined);
-      setLastSubmit(undefined);
-    }
-  }, [provider, address]);
+    fetchContractData();
+  }, [provider, address, fetchContractData]);
 
   return (
     <QuizTokenContext.Provider
       value={{
         balance,
-        cooldownSec,
         errorMsg,
         getTimeLeft,
-        lastSubmit,
         loadingSubmit,
+        nextSurveySecs: nextSurveyTime,
         removeError,
         submitSurvey,
         tokenName,
