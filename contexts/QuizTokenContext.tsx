@@ -21,9 +21,8 @@ type QuizTokenContextType = {
   errorMsg: string;
   getTimeLeft: () => string | undefined;
   loadingSubmit: boolean;
-  nextSurveySecs: number | undefined;
   removeError: () => void;
-  submitSurvey: (surveyId: number, answerId: number[]) => void;
+  submitSurvey: (surveyId: number, answerId: number[]) => Promise<void>;
   tokenName: string | undefined;
   tokenSymbol: string | undefined;
 };
@@ -35,7 +34,7 @@ export const QuizTokenContext = createContext<QuizTokenContextType>(
 export default function QuizTokenProvider({ children }: Props) {
   const { address, signer, provider } = useWallet();
   const [balance, setBalance] = useState<string | undefined>("");
-  const [nextSurveyTime, setNextSurveyTime] = useState<number | undefined>();
+  const [timeLockSurvey, setTimeLockSurvey] = useState<number | undefined>();
   const [loadingSubmit, setLoadingSubmit] = useState(false);
   const [tokenName, setTokenName] = useState<string | undefined>("");
   const [tokenSymbol, setTokenSymbol] = useState<string | undefined>("");
@@ -46,8 +45,8 @@ export default function QuizTokenProvider({ children }: Props) {
   };
 
   const getTimeLeft = () => {
-    if (nextSurveyTime) {
-      return getTimeLeftClock(nextSurveyTime - Math.floor(Date.now() / 1000));
+    if (timeLockSurvey) {
+      return getTimeLeftClock(timeLockSurvey - Math.floor(Date.now() / 1000));
     }
   };
 
@@ -64,7 +63,7 @@ export default function QuizTokenProvider({ children }: Props) {
           setTokenName(values[1]);
           setTokenSymbol(values[2]);
           setBalance(wtoeCommify(values[3]));
-          setNextSurveyTime(Number(values[0]) + Number(values[4]));
+          setTimeLockSurvey(Number(values[0]) + Number(values[4]));
         })
         .catch((error) => {
           const errorMessage = getErrorMessage(error);
@@ -74,7 +73,7 @@ export default function QuizTokenProvider({ children }: Props) {
       setTokenName(undefined);
       setTokenSymbol(undefined);
       setBalance(undefined);
-      setNextSurveyTime(undefined);
+      setTimeLockSurvey(undefined);
     }
   }, [address, provider]);
 
@@ -83,9 +82,8 @@ export default function QuizTokenProvider({ children }: Props) {
       try {
         setLoadingSubmit(true);
         const resp = await submit(signer, surveyId, answerId);
-        await resp.await();
-        const _balance = await balanceOf(provider, address);
-        setBalance(_balance);
+        await resp.wait();
+        fetchContractData();
       } catch (error) {
         const errorMessage = getErrorMessage(error);
         setErrorMsg(errorMessage);
@@ -106,7 +104,6 @@ export default function QuizTokenProvider({ children }: Props) {
         errorMsg,
         getTimeLeft,
         loadingSubmit,
-        nextSurveySecs: nextSurveyTime,
         removeError,
         submitSurvey,
         tokenName,
