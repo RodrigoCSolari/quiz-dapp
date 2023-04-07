@@ -1,38 +1,91 @@
-This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+# Quiz-Dapp
 
-## Getting Started
+## Description
 
-First, run the development server:
+A web3 application that connects to the Ethereum blockchain through MetaMask. Users can participate in surveys in exchange for airdrops of Quiz Tokens.
+
+## Vercel deployment
+
+- https://quiz-dapp-git-dev-rodrigocsolari.vercel.app/
+
+## Technologies Used
+
+- Next.js
+- Typescript
+- Ethers.js
+- Ant Design
+- Metamask
+
+## Commands to Run the App
+
+1. Clone this repository:
+
+```bash
+git clone https://github.com/RodrigoCSolari/quiz-dapp.git
+```
+
+2. Install dependencies:
+
+```bash
+npm install
+```
+
+3. Create a .env file in the root of the project and configure environment variables:
+
+```bash
+NEXT_PUBLIC_CONTRACT_ADDRESS_GOERLI="0x437eF217203452317C3C955Cf282b1eE5F6aaF72"
+NEXT_PUBLIC_VERCEL_ENV="goerli"
+```
+
+4. Run the app in development mode:
 
 ```bash
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+5. Open the app in your web browser:
 
-You can start editing the page by modifying `pages/index.tsx`. The page auto-updates as you edit the file.
+```bash
+http://localhost:3000
+```
 
-[API routes](https://nextjs.org/docs/api-routes/introduction) can be accessed on [http://localhost:3000/api/hello](http://localhost:3000/api/hello). This endpoint can be edited in `pages/api/hello.ts`.
+## Environment Variables
 
-The `pages/api` directory is mapped to `/api/*`. Files in this directory are treated as [API routes](https://nextjs.org/docs/api-routes/introduction) instead of React pages.
+The app uses the following environment variables:
 
-This project uses [`next/font`](https://nextjs.org/docs/basic-features/font-optimization) to automatically optimize and load Inter, a custom Google Font.
+- `NEXT_PUBLIC_CONTRACT_ADDRESS_GOERLI`: Goerli quiz token address.
+- `NEXT_PUBLIC_VERCEL_ENV`: Name of the ethereum nertwork.
 
-## Learn More
+## Screenshots
 
-To learn more about Next.js, take a look at the following resources:
+### Login
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+![Screenshot of App in Action](/assets/login.png)
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js/) - your feedback and contributions are welcome!
+### Wrong network
 
-## Deploy on Vercel
+![Screenshot of App in Action](/assets/wrong-network.png)
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+### Home
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/deployment) for more details.
+![Screenshot of App in Action](/assets/home.png)
+
+### Account modal
+
+![Screenshot of App in Action](/assets/modal.png)
+
+### Survey
+
+![Screenshot of App in Action](/assets/survey.png)
+
+### Survey overview
+
+![Screenshot of App in Action](/assets/overview.png)
+
+## Resources
+
+List of resources used to build this app.
+
+- [Ethers.js](https://docs.ethers.org/v5)
+- [Ant desing](https://ant.design/)
+- [Metamask guide](https://docs.metamask.io/)
