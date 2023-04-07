@@ -22,7 +22,7 @@ export function wtoeCommify(weis: BigNumber | undefined) {
   if (!weis) {
     return "";
   }
-  return formatStringDecimals(commify(formatEther(weis)), 5);
+  return formatStringDecimals(commify(formatEther(weis)), 2);
 }
 
 export function formatStringDecimals(num: string, decimals: number) {
