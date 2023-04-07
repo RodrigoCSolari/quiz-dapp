@@ -2,6 +2,7 @@ import { layoutStyle } from "./_app.style";
 import Header from "../components/Header";
 import Footer from "@/components/Footer";
 import { BG_BASE, PRIMARY_COLOR } from "@/constants/colors";
+import QuizTokenProvider from "@/contexts/QuizTokenContext";
 import WalletProvider from "@/contexts/WalletContext";
 import { Ethereum } from "@/lib/metamask.types";
 import { ConfigProvider, Layout } from "antd";
@@ -23,20 +24,25 @@ export default function App({ Component, pageProps }: AppProps) {
       }}
     >
       <WalletProvider>
-        <Head>
-          <title>QuizDapp</title>
-          <meta
-            name="description"
-            content="complete quiz and earn quiz tokens"
-          />
-          <meta name="viewport" content="width=device-width, initial-scale=1" />
-          <link rel="icon" href="/favicon.ico" />
-        </Head>
-        <Layout style={layoutStyle}>
-          <Header />
-          <Component {...pageProps} />
-          <Footer />
-        </Layout>
+        <QuizTokenProvider>
+          <Head>
+            <title>QuizDapp</title>
+            <meta
+              name="description"
+              content="complete quiz and earn quiz tokens"
+            />
+            <meta
+              name="viewport"
+              content="width=device-width, initial-scale=1"
+            />
+            <link rel="icon" href="/favicon.ico" />
+          </Head>
+          <Layout style={layoutStyle}>
+            <Header />
+            <Component {...pageProps} />
+            <Footer />
+          </Layout>
+        </QuizTokenProvider>
       </WalletProvider>
     </ConfigProvider>
   );
