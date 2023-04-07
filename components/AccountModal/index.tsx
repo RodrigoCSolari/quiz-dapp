@@ -8,6 +8,9 @@ type Props = {
   setShowModal: Dispatch<SetStateAction<boolean>>;
   address: string;
   disconnect: () => void;
+  balance: string;
+  tokenName: string;
+  tokenSymbol: string;
 };
 
 export default function AccountModal({
@@ -15,6 +18,9 @@ export default function AccountModal({
   setShowModal,
   address,
   disconnect,
+  balance,
+  tokenName,
+  tokenSymbol,
 }: Props) {
   const handleCopyAddress = async () => {
     await navigator.clipboard.writeText(address);
@@ -60,9 +66,11 @@ export default function AccountModal({
         {address}
       </Typography.Paragraph>
       <Typography.Title level={5} style={titleStyle}>
-        Quiz Token Balance:
+        {tokenName} Balance:
       </Typography.Title>
-      <Typography.Paragraph style={paragraphStyle}>0 QUIZ</Typography.Paragraph>
+      <Typography.Paragraph style={paragraphStyle}>
+        {balance} {tokenSymbol}
+      </Typography.Paragraph>
     </Modal>
   );
 }
