@@ -1,4 +1,5 @@
 import { imageStyle } from "./index.style";
+import SurveyQuestion from "../SurveyQuestion";
 import { SurveyType } from "@/hooks/useSurvey";
 import { Button, Col, Image, Row, Space, Typography } from "antd";
 
@@ -18,9 +19,20 @@ export default function Survey({
   startSurvey,
   isSurveyRunning,
   answers,
+  questionSecondsLeft,
+  addAnswer,
+  currentQuestion,
 }: Props) {
   if (isSurveyRunning) {
-    return <div>SurveyQuestion</div>;
+    return (
+      <SurveyQuestion
+        addAnswer={addAnswer}
+        answers={answers}
+        currentQuestion={currentQuestion}
+        question={survey.questions[currentQuestion]}
+        secondsLeft={questionSecondsLeft}
+      />
+    );
   }
 
   if (answers.length > 0) {
