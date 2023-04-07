@@ -1,6 +1,6 @@
+import SurveyOverview from "./SurveyOverview";
+import SurveyQuestion from "./SurveyQuestion";
 import { imageStyle } from "./index.style";
-import SurveyOverview from "../SurveyOverview";
-import SurveyQuestion from "../SurveyQuestion";
 import { SurveyType } from "@/hooks/useSurvey";
 import { Button, Col, Image, Row, Space, Typography } from "antd";
 
