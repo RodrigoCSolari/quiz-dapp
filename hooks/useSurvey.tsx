@@ -1,4 +1,5 @@
 import useQuizToken from "./useQuizToken";
+import { getSurvey } from "@/services/getSurvey";
 import { getErrorMessage } from "@/utils/getErrorMessage";
 import { useEffect, useState } from "react";
 
@@ -36,17 +37,6 @@ export default function useSurvey() {
         ...prevAnswers.filter((prev, i) => i !== index),
         answer,
       ]);
-    }
-  };
-
-  const getSurvey = async () => {
-    try {
-      const response = await fetch("/api/surveyEndPoint");
-      const data = await response.json();
-      setSurvey(data);
-    } catch (error) {
-      const errorMessage = getErrorMessage(error);
-      setErrorMsg(errorMessage);
     }
   };
 
@@ -93,7 +83,12 @@ export default function useSurvey() {
 
   useEffect(() => {
     if (surveyAvailable) {
-      getSurvey();
+      getSurvey()
+        .then((surv) => setSurvey(surv))
+        .catch((error) => {
+          const errorMessage = getErrorMessage(error);
+          setErrorMsg(errorMessage);
+        });
     }
   }, [surveyAvailable]);
 
