@@ -1,4 +1,4 @@
-import Disconnected from "./disconnected";
+import Disconnected from "../components/Disconnected";
 
 export default function Home() {
   return <Disconnected />;
