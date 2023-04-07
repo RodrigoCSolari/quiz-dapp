@@ -1,6 +1,6 @@
 import useWallet from "../hooks/useWallet";
 import { wtoeCommify } from "../lib/util";
-import { getErrorMessage } from "../utils/getErrorMessage";
+import useNotify from "@/hooks/useNotify";
 import {
   balanceOf,
   cooldownSeconds,
@@ -18,10 +18,8 @@ type Props = {
 
 type QuizTokenContextType = {
   balance: string | undefined;
-  errorMsg: string;
   getTimeLeft: () => string | undefined;
   loadingSubmit: boolean;
-  removeError: () => void;
   submitSurvey: (surveyId: number, answerId: number[]) => Promise<void>;
   tokenName: string | undefined;
   tokenSymbol: string | undefined;
@@ -38,11 +36,7 @@ export default function QuizTokenProvider({ children }: Props) {
   const [loadingSubmit, setLoadingSubmit] = useState(false);
   const [tokenName, setTokenName] = useState<string | undefined>("");
   const [tokenSymbol, setTokenSymbol] = useState<string | undefined>("");
-  const [errorMsg, setErrorMsg] = useState("");
-
-  const removeError = () => {
-    setErrorMsg("");
-  };
+  const { setErrorMsg, showSuccessMsg } = useNotify();
 
   const getTimeLeft = () => {
     if (timeLockSurvey) {
@@ -66,8 +60,7 @@ export default function QuizTokenProvider({ children }: Props) {
           setTimeLockSurvey(Number(values[0]) + Number(values[4]));
         })
         .catch((error) => {
-          const errorMessage = getErrorMessage(error);
-          setErrorMsg(errorMessage);
+          setErrorMsg(error);
         });
     } else {
       setTokenName(undefined);
@@ -75,7 +68,7 @@ export default function QuizTokenProvider({ children }: Props) {
       setBalance(undefined);
       setTimeLockSurvey(undefined);
     }
-  }, [address, provider]);
+  }, [address, provider, setErrorMsg]);
 
   const submitSurvey = async (surveyId: number, answerId: number[]) => {
     if (signer && provider && address) {
@@ -84,13 +77,12 @@ export default function QuizTokenProvider({ children }: Props) {
         const resp = await submit(signer, surveyId, answerId);
         await resp.wait();
         fetchContractData();
+        showSuccessMsg();
       } catch (error) {
-        const errorMessage = getErrorMessage(error);
-        setErrorMsg(errorMessage);
+        setErrorMsg(error);
       }
       setLoadingSubmit(false);
     }
-    setErrorMsg("Your wallet is disconnect");
   };
 
   useEffect(() => {
@@ -101,10 +93,8 @@ export default function QuizTokenProvider({ children }: Props) {
     <QuizTokenContext.Provider
       value={{
         balance,
-        errorMsg,
         getTimeLeft,
         loadingSubmit,
-        removeError,
         submitSurvey,
         tokenName,
         tokenSymbol,

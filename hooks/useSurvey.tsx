@@ -1,6 +1,6 @@
+import useNotify from "./useNotify";
 import useQuizToken from "./useQuizToken";
 import { getSurvey } from "@/services/getSurvey";
-import { getErrorMessage } from "@/utils/getErrorMessage";
 import { useEffect, useState } from "react";
 
 export type SurveyType = {
@@ -25,8 +25,8 @@ export default function useSurvey() {
   const [questionTimestampLimit, setQuestionTimestampLimit] = useState(0);
   const [questionSecondsLeft, setQuestionSecondsLeft] = useState(0);
   const [survey, setSurvey] = useState<SurveyType>();
-  const [errorMsg, setErrorMsg] = useState("");
   const { getTimeLeft, loadingSubmit, submitSurvey } = useQuizToken();
+  const { setErrorMsg } = useNotify();
 
   const addAnswer = (index: number, answer: number) => {
     if (index === answers.length) {
@@ -63,7 +63,6 @@ export default function useSurvey() {
     setQuestionTimestampLimit(0);
     setQuestionSecondsLeft(0);
     setSurvey(undefined);
-    setErrorMsg("");
   };
 
   useEffect(() => {
@@ -86,11 +85,10 @@ export default function useSurvey() {
       getSurvey()
         .then((surv) => setSurvey(surv))
         .catch((error) => {
-          const errorMessage = getErrorMessage(error);
-          setErrorMsg(errorMessage);
+          setErrorMsg(error);
         });
     }
-  }, [surveyAvailable]);
+  }, [surveyAvailable, setErrorMsg]);
 
   useEffect(() => {
     if (survey && isSurveyRunning) {
@@ -135,7 +133,6 @@ export default function useSurvey() {
     addAnswer,
     answers,
     currentQuestion,
-    errorMsg,
     isSurveyRunning,
     loadingSubmit,
     questionSecondsLeft,
